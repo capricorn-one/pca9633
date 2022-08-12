@@ -9,16 +9,12 @@ typedef int8_t (*pca9633_transfer_func_ptr_t)(uint8_t address, uint8_t reg, uint
 class pca9633 {
 
 public:
-
-    pca9633(void);
-
     void begin(uint8_t address, pca9633_transfer_func_ptr_t twi_transfer_func);
     void reset(void);
 
     void setOutput(uint8_t led, uint8_t state);
     void setBrightness(uint8_t led, uint8_t brightness);
     
-
 private:
     
     uint8_t i2c_address;

@@ -33,9 +33,6 @@
 #define PCA9633_MODE2_OUTDRV_OPENDRAIN      (0<<2)
 #define PCA9633_MODE2_OUTNE(X)              (X&0x03)
 
-pca9633::pca9633() {}
-
-
 void pca9633::begin(uint8_t address, pca9633_transfer_func_ptr_t twi_transfer_func) {
 
     i2c_address = PCA9633_BASE_ADDRESS + address;
@@ -84,13 +81,11 @@ void pca9633::setModeReg(uint8_t modeReg, uint8_t mode) {
 int8_t pca9633::twi_write(uint8_t reg, void *data, size_t len) {
     if(twi_transfer_func_ptr)
         return twi_transfer_func_ptr(i2c_address,reg, 1, data, len, 0);
-    else
-        return -1;
+    return -1;
 }
 
 int8_t pca9633::twi_read(uint8_t reg, void *data, size_t len) {
     if(twi_transfer_func_ptr)
         return twi_transfer_func_ptr(i2c_address, reg, 1, data, len, 1);
-    else
-        return -1;
+    return -1;
 }

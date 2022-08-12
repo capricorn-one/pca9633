@@ -1,0 +1,22 @@
+{
+    "name": "PCA9633",
+    "version": "1.0.0",
+    "description": "",
+    "repository": {
+      "type": "git",
+      "url": "https://aerosource2.aero.org/bitbucket/projects/LEAF/repos/pca9633"
+    },
+    "authors": [
+        {
+            "name": "Colin Mann"
+        }, {
+            "name": "Ethan Wolfe"
+        }
+    ],
+    "build": {
+        "srcDir": "src",
+        "includeDir": "include"
+    },
+	"frameworks": "*",
+	"platforms": "*"
+  }

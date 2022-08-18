@@ -33,11 +33,10 @@
 #define PCA9633_MODE2_OUTDRV_OPENDRAIN      (0<<2)
 #define PCA9633_MODE2_OUTNE(X)              (X&0x03)
 
-void pca9633::begin(uint8_t address, pca9633_transfer_func_ptr_t twi_transfer_func) {
-
+void pca9633::begin(uint8_t address, I2CTransfer transferFunc) {
     i2c_address = PCA9633_BASE_ADDRESS + address;
 
-    twi_transfer_func_ptr = twi_transfer_func;
+    transferFuncPtr = transferFunc;
 
     output_states = 0x00;
 
@@ -51,9 +50,9 @@ void pca9633::begin(uint8_t address, pca9633_transfer_func_ptr_t twi_transfer_fu
 }
 
 void pca9633::reset() {
-    if(twi_transfer_func_ptr) {
+    if(transferFuncPtr) {
         uint8_t resetBytes[2] = {0xA5, 0x5A};
-        twi_transfer_func_ptr(PCA9633_RESET_ADDRESS, 0x00, 0, resetBytes, 2, 0);
+        transferFuncPtr(PCA9633_RESET_ADDRESS, 0x00, 0, resetBytes, 2, 0);
     }
 }
 
@@ -79,13 +78,13 @@ void pca9633::setModeReg(uint8_t modeReg, uint8_t mode) {
 }
 
 int8_t pca9633::twi_write(uint8_t reg, uint8_t *data, size_t len) {
-    if(twi_transfer_func_ptr)
-        return twi_transfer_func_ptr(i2c_address,reg, 1, data, len, 0);
+    if(transferFuncPtr)
+        return transferFuncPtr(i2c_address,reg, 1, data, len, 0);
     return -1;
 }
 
 int8_t pca9633::twi_read(uint8_t reg, uint8_t *data, size_t len) {
-    if(twi_transfer_func_ptr)
-        return twi_transfer_func_ptr(i2c_address, reg, 1, data, len, 1);
+    if(transferFuncPtr)
+        return transferFuncPtr(i2c_address, reg, 1, data, len, 1);
     return -1;
 }

@@ -69,7 +69,7 @@ void pca9633::setOutput(uint8_t led, uint8_t state) {
 }
 
 void pca9633::setBrightness(uint8_t led, uint8_t brightness) {
-    twi_write( PCA9633_REG_PWM0 + (led%4), &brightness, 1);
+    twi_write( PCA9633_REG_PWM0 + (led % 4), &brightness, 1);
 }
 
 void pca9633::setModeReg(uint8_t modeReg, uint8_t mode) {
@@ -78,13 +78,13 @@ void pca9633::setModeReg(uint8_t modeReg, uint8_t mode) {
     twi_write(PCA9633_REG_MODE1 + modeReg, &mode, 1);
 }
 
-int8_t pca9633::twi_write(uint8_t reg, void *data, size_t len) {
+int8_t pca9633::twi_write(uint8_t reg, uint8_t *data, size_t len) {
     if(twi_transfer_func_ptr)
         return twi_transfer_func_ptr(i2c_address,reg, 1, data, len, 0);
     return -1;
 }
 
-int8_t pca9633::twi_read(uint8_t reg, void *data, size_t len) {
+int8_t pca9633::twi_read(uint8_t reg, uint8_t *data, size_t len) {
     if(twi_transfer_func_ptr)
         return twi_transfer_func_ptr(i2c_address, reg, 1, data, len, 1);
     return -1;

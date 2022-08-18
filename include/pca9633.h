@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-typedef int8_t (*pca9633_transfer_func_ptr_t)(uint8_t address, uint8_t reg, uint8_t regLength, void *data, size_t len, uint8_t read);
+typedef int8_t (*pca9633_transfer_func_ptr_t)(uint8_t address, uint8_t reg, uint8_t regLength, uint8_t *data, size_t len, uint8_t read);
 
 class pca9633 {
 
@@ -25,8 +25,8 @@ private:
 
     void setModeReg(uint8_t modeReg, uint8_t mode);
 
-    int8_t twi_write(uint8_t reg, void *data, size_t len);
-    int8_t twi_read(uint8_t reg, void *data, size_t len);
+    int8_t twi_write(uint8_t reg, uint8_t *data, size_t len);
+    int8_t twi_read(uint8_t reg, uint8_t *data, size_t len);
 
 };
 

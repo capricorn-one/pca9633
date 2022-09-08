@@ -16,7 +16,7 @@
     "dependencies" :[
         {
             "name": "HAL",
-            "version": "symlink://../../LeafLibraries/HAL"
+            "version": "symlink://../../Libraries/HAL"
         }
     ],
     "build": {

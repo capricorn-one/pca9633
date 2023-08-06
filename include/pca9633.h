@@ -4,34 +4,30 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     int8_t (*transfer)(uint8_t address, uint8_t reg, uint8_t *data, size_t len, uint8_t read);
     void (*delay_ms)(uint32_t ms);
+    uint8_t address;
+    uint8_t output_states;
 } pca9633_hal_t;
 
-class pca9633 {
+    void pca9633_begin(pca9633_hal_t *pca9633_hal);
 
-public:
-    void begin(uint8_t address, pca9633_hal_t *pca9633_hal);
-    void reset(void);
+    void pca9633_reset(pca9633_hal_t *pca9633_hal);
 
-    void setOutput(uint8_t led, uint8_t state);
-    void setBrightness(uint8_t led, uint8_t brightness);
+    void pca9633_setOutput(pca9633_hal_t *pca9633_hal, uint8_t led, uint8_t state);
+
+    void pca9633_setBrightness(pca9633_hal_t *pca9633_hal, uint8_t led, uint8_t brightness);
     
-private:
-    
-    uint8_t i2c_address;
+    void pca9633_setModeReg(pca9633_hal_t *pca9633_hal, uint8_t modeReg, uint8_t mode);
 
-    uint8_t output_states;
 
-    void setModeReg(uint8_t modeReg, uint8_t mode);
-
-    pca9633_hal_t *hal;
-
-    int8_t twi_write(uint8_t reg, uint8_t *data, size_t len);
-    int8_t twi_read(uint8_t reg, uint8_t *data, size_t len);
-
-};
+#ifdef __cplusplus
+}
+#endif
 
 #endif

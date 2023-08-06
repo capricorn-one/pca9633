@@ -32,59 +32,57 @@
 #define PCA9633_MODE2_OUTDRV_OPENDRAIN      (0<<2)
 #define PCA9633_MODE2_OUTNE(X)              (X&0x03)
 
-void pca9633::begin(uint8_t address, pca9633_hal_t *pca9633_hal) {
+
+static int8_t pca9633_write(pca9633_hal_t *pca9633_hal, uint8_t reg, uint8_t *data, size_t len) {
+    if(pca9633_hal)
+        return pca9633_hal->transfer(pca9633_hal->address + PCA9633_BASE_ADDRESS, reg, data, len, 0);
+    return -1;
+}
+
+static int8_t pca9633_read(pca9633_hal_t *pca9633_hal, uint8_t reg, uint8_t *data, size_t len) {
+    if(pca9633_hal)
+        return pca9633_hal->transfer(pca9633_hal->address + PCA9633_BASE_ADDRESS, reg, data, len, 1);
+    return -1;
+}
+
+void pca9633_begin(pca9633_hal_t *pca9633_hal) {
     
-    i2c_address = PCA9633_BASE_ADDRESS + address;
+    pca9633_hal->output_states = 0x00;
 
-    hal = pca9633_hal;
+    pca9633_reset(pca9633_hal);
 
-    output_states = 0x00;
+    pca9633_hal->delay_ms(5);
 
-    reset();
-
-    hal->delay_ms(5);
-
-    setModeReg(0, (PCA9633_MODE1_OSC_EN | PCA9633_MODE1_ALLCALL_EN));
-    setModeReg(1, (PCA9633_MODE2_OUTDRV_OPENDRAIN | PCA9633_MODE2_OUTNE(1)));
+    pca9633_setModeReg(pca9633_hal, 0, (PCA9633_MODE1_OSC_EN | PCA9633_MODE1_ALLCALL_EN));
+    pca9633_setModeReg(pca9633_hal, 1, (PCA9633_MODE2_OUTDRV_OPENDRAIN | PCA9633_MODE2_OUTNE(1)));
     
 }
 
-void pca9633::reset() {
-    if(hal) {
+void pca9633_reset(pca9633_hal_t *pca9633_hal) {
+    if(pca9633_hal) {
         uint8_t resetBytes[2] = {0xA5, 0x5A};
-        hal->transfer(PCA9633_RESET_ADDRESS, 0x00, resetBytes, 2, 0);
+        pca9633_hal->transfer(PCA9633_RESET_ADDRESS, 0x00, resetBytes, 2, 0);
     }
 }
 
-void pca9633::setOutput(uint8_t led, uint8_t state) {
+void pca9633_setOutput(pca9633_hal_t *pca9633_hal, uint8_t led, uint8_t state) {
     
     if(led > 3) led = 3;
         
-    output_states &= ~(0x03<<(2*led));      // clear current states
+    pca9633_hal->output_states &= ~(0x03<<(2*led));      // clear current states
 
-    output_states |= (state<<(2*led + 1));
+    pca9633_hal->output_states |= (state<<(2*led + 1));
 
-    twi_write( PCA9633_REG_LEDOUT, &output_states, 1);
+    pca9633_write(pca9633_hal, PCA9633_REG_LEDOUT, &pca9633_hal->output_states, 1);
 }
 
-void pca9633::setBrightness(uint8_t led, uint8_t brightness) {
-    twi_write( PCA9633_REG_PWM0 + (led % 4), &brightness, 1);
+void pca9633_setBrightness(pca9633_hal_t *pca9633_hal, uint8_t led, uint8_t brightness) {
+    pca9633_write(pca9633_hal, PCA9633_REG_PWM0 + (led % 4), &brightness, 1);
 }
 
-void pca9633::setModeReg(uint8_t modeReg, uint8_t mode) {
+void pca9633_setModeReg(pca9633_hal_t *pca9633_hal, uint8_t modeReg, uint8_t mode) {
     modeReg &= 0x01;
 
-    twi_write(PCA9633_REG_MODE1 + modeReg, &mode, 1);
+    pca9633_write(pca9633_hal, PCA9633_REG_MODE1 + modeReg, &mode, 1);
 }
 
-int8_t pca9633::twi_write(uint8_t reg, uint8_t *data, size_t len) {
-    if(hal)
-        return hal->transfer(i2c_address, reg, data, len, 0);
-    return -1;
-}
-
-int8_t pca9633::twi_read(uint8_t reg, uint8_t *data, size_t len) {
-    if(hal)
-        return hal->transfer(i2c_address, reg, data, len, 1);
-    return -1;
-}

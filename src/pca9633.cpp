@@ -39,12 +39,6 @@ static int8_t pca9633_write(pca9633_hal_t *pca9633_hal, uint8_t reg, uint8_t *da
     return -1;
 }
 
-static int8_t pca9633_read(pca9633_hal_t *pca9633_hal, uint8_t reg, uint8_t *data, size_t len) {
-    if(pca9633_hal)
-        return pca9633_hal->transfer(pca9633_hal->address + PCA9633_BASE_ADDRESS, reg, data, len, 1);
-    return -1;
-}
-
 void pca9633_begin(pca9633_hal_t *pca9633_hal) {
     
     pca9633_hal->output_states = 0x00;
